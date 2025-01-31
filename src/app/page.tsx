@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { Suspense, useEffect, useState } from "react";
 import { useAgentId } from "./hooks/useAgentId";
-import type { WalletSelector } from "@near-wallet-selector/core";
+import type { WalletSelector, Wallet } from "@near-wallet-selector/core";
 
 // Dynamically import the chat component with no SSR
 const BitteAiChat = dynamic(
@@ -13,12 +13,12 @@ const BitteAiChat = dynamic(
 
 export default function Home() {
   const agentId = useAgentId();
-  const [selector, setSelector] = useState<WalletSelector>();
-  const [wallet, setWallet] = useState<any>();
+  const [selector, setSelector] = useState<WalletSelector | null>(null);
+  const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
 
   useEffect(() => {
     // Get the selector instance from window
-    const sel = (window as any).selector;
+    const sel = (window as { selector?: WalletSelector }).selector;
     if (sel) {
       setSelector(sel);
     }

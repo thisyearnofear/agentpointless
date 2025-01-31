@@ -1,101 +1,156 @@
-import Image from "next/image";
+"use client";
+
+import dynamic from "next/dynamic";
+import { Suspense, useEffect, useState } from "react";
+import { useAgentId } from "./hooks/useAgentId";
+import type { WalletSelector } from "@near-wallet-selector/core";
+
+// Dynamically import the chat component with no SSR
+const BitteAiChat = dynamic(
+  () => import("@bitte-ai/chat").then((mod) => mod.BitteAiChat),
+  { ssr: false }
+);
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const agentId = useAgentId();
+  const [selector, setSelector] = useState<WalletSelector>();
+  const [wallet, setWallet] = useState<any>();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    // Get the selector instance from window
+    const sel = (window as any).selector;
+    if (sel) {
+      setSelector(sel);
+    }
+  }, []);
+
+  useEffect(() => {
+    const setupWallet = async () => {
+      if (selector) {
+        const walletInstance = await selector.wallet();
+        setWallet(walletInstance);
+      }
+    };
+    setupWallet();
+  }, [selector]);
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900">
+      {/* Header */}
+      <header className="border-b border-gray-100 py-6">
+        <div className="max-w-5xl mx-auto px-6">
+          <h1 className="text-3xl font-bold">Pointless Agent</h1>
+          <p className="text-gray-600 mt-2">
+            The first social token on Lens, $pointless ... until it isn't
+          </p>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr,1fr] gap-12">
+          {/* Chat Section */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[600px]">
+            <Suspense fallback={<div className="p-4">Loading chat...</div>}>
+              {agentId ? (
+                <BitteAiChat
+                  agentId={agentId}
+                  apiUrl="/api/chat"
+                  colors={{
+                    generalBackground: "#ffffff",
+                    messageBackground: "#f3f4f6",
+                    textColor: "#111827",
+                    buttonColor: "#3b82f6",
+                    borderColor: "#e5e7eb",
+                  }}
+                  wallet={{ near: { wallet } }}
+                />
+              ) : (
+                <div className="p-4">Connecting to agent...</div>
+              )}
+            </Suspense>
+          </div>
+
+          {/* Info Section */}
+          <div className="space-y-8">
+            {/* Contract Addresses */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Contract Addresses</h2>
+              <div className="space-y-2 text-sm">
+                <p className="font-mono bg-gray-50 p-2 rounded">
+                  <span className="text-gray-500">Base:</span>
+                  <br />
+                  0xaF13924f23Be104b96c6aC424925357463b0d105
+                </p>
+                <p className="font-mono bg-gray-50 p-2 rounded">
+                  <span className="text-gray-500">ZK:</span>
+                  <br />
+                  0xFD21D5E148dF3B93AE6deC416544Fb3d3E21260C
+                </p>
+                <p className="font-mono bg-gray-50 p-2 rounded">
+                  <span className="text-gray-500">Polygon:</span>
+                  <br />
+                  0x9B8cc6320F22325759B7D2CA5CD27347bB4eCD86
+                </p>
+              </div>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Community</h2>
+              <div className="space-y-2">
+                <a
+                  href="https://www.pointless.wtf/history"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  🌐 Website
+                </a>
+                <a
+                  href="https://x.com/pointless_wtf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  𝕏 Twitter
+                </a>
+                <a
+                  href="https://discord.com/invite/yPhqdRaCew"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  💬 Discord
+                </a>
+                <a
+                  href="https://hey.xyz/u/pointless"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  👋 Hey.xyz
+                </a>
+                <a
+                  href="https://orb.club/p/0x020d80-0xc3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  🔮 Orb Club
+                </a>
+                <a
+                  href="http://pt-bridge-x9el.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  🌉 Bridge
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

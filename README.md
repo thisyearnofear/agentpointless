@@ -32,41 +32,45 @@ pnpm run dev
 ```
 
 This will:
+
 - Start your Next.js application
-- Launch make-agent 
+- Launch make-agent
 - Prompt you to sign a message in Bitte wallet to create an API key
 - Launch your agent in the Bitte playground
 - Allow you to freely edit and develop your code in the playground environment
-
 
 ## Available Tools
 
 The template includes several pre-built tools:
 
 ### 1. Blockchain Information
+
 - Endpoint: `/api/tools/get-blockchains`
 - Returns a randomized list of blockchain networks
 
 ### 2. NEAR Transaction Generator
+
 - Endpoint: `/api/tools/create-near-transaction`
 - Creates NEAR transaction payloads for token transfers
 
 ### 3. EVM Transaction Generator
+
 - Endpoint: `/api/tools/create-evm-transaction`
 - Creates EVM transaction payloads for native eth transfers
 
 ### 4. Twitter Share
+
 - Endpoint: `/api/tools/twitter`
 - Generates Twitter share intent URLs
 
 ### 5. Coin Flip
+
 - Endpoint: `/api/tools/coinflip`
 - Simple random coin flip generator
 
 ## AI Agent Configuration
 
 The template includes a pre-configured AI agent manifest at `/.well-known/ai-plugin.json`. You can customize the agent's behavior by modifying the configuration in `/api/ai-plugins/route.ts`. This route generates and returns the manifest object.
-
 
 ## Deployment
 
@@ -80,15 +84,18 @@ The template includes a pre-configured AI agent manifest at `/.well-known/ai-plu
 Whether you want to add a tool to this boilerplate or make your own standalone agent tool, here's you'll need:
 
 1. Make sure [`make-agent`](https://github.com/BitteProtocol/make-agent) is installed in your project:
+
 ```bash
 pnpm install --dev make-agent
 ```
+
 2. Set up a manifest following the OpenAPI specification that describes your agent and its paths.
 3. Have an api endpoint with the path `GET /api/ai-plugin` that returns your manifest
 
 ## Setting up the manifest
 
 Follow the [OpenAPI Specification](https://swagger.io/specification/#schema-1) to add the following fields in the manifest object:
+
 - `openapi`: The OpenAPI specification version that your manifest is following. Usually this is the latest version.
 - `info`: Object containing information about the agent, namely its 'title', 'description' and 'version'.
 - `servers`: Array of objects containing the urls for the deployed instances of the agent.

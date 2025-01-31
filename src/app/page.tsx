@@ -20,6 +20,12 @@ export default function Home() {
     // Get the selector instance from window
     const sel = (window as { selector?: WalletSelector }).selector;
     if (sel) {
+      console.log("Selector configuration:", {
+        config: process.env.BITTE_CONFIG,
+        parsed: process.env.BITTE_CONFIG
+          ? JSON.parse(process.env.BITTE_CONFIG)
+          : null,
+      });
       setSelector(sel);
     }
   }, []);

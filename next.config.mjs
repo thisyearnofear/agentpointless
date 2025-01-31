@@ -19,7 +19,11 @@ const nextConfig = {
     return config;
   },
   env: {
-    BITTE_CONFIG: process.env.BITTE_CONFIG,
+    BITTE_CONFIG:
+      process.env.BITTE_CONFIG ||
+      JSON.stringify({
+        url: process.env.NEXT_PUBLIC_BITTE_URL || "https://wallet.bitte.ai",
+      }),
   },
 };
 

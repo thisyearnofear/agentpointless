@@ -41,7 +41,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-6">
           <h1 className="text-3xl font-bold">Pointless Agent</h1>
           <p className="text-gray-600 mt-2">
-            The first social token on Lens, $pointless ... until it isn't
+            The first social token on Lens, $pointless ... until it isn&apos;t
           </p>
         </div>
       </header>

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useAgentId } from "./hooks/useAgentId";
 import type { WalletSelector, Wallet } from "@near-wallet-selector/core";
@@ -41,7 +42,7 @@ export default function Home() {
   }, [selector]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-100 py-6">
         <div className="max-w-5xl mx-auto px-6">
@@ -52,7 +53,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-12">
+      <main className="max-w-5xl mx-auto px-6 py-12 flex-grow">
         <div className="grid grid-cols-1 md:grid-cols-[2fr,1fr] gap-12">
           {/* Chat Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[600px]">
@@ -157,6 +158,28 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Footer with BitteAI Attribution */}
+      <footer className="border-t border-gray-100 py-4 mt-auto">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-center space-x-2">
+          <span className="text-sm text-gray-600">Built with</span>
+          <a
+            href="https://docs.bitte.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 text-gray-800 hover:text-blue-600 transition-colors"
+          >
+            <Image
+              src="/images/bitte.png"
+              alt="BitteAI"
+              width={20}
+              height={20}
+              className="inline-block"
+            />
+            <span className="text-sm font-medium">BitteAI</span>
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
